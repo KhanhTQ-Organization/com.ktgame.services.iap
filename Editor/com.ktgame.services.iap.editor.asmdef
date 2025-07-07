@@ -1,0 +1,19 @@
+{
+    "name": "com.ktgame.services.iap.editor",
+    "rootNamespace": "com.ktgame.services.iap.editor",
+    "references": [
+        "GUID:e0d50d8d303bdfb4cb75bac6d9c32055",
+        "GUID:ea2ae37156ab74bd0b7bf06641413d82"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

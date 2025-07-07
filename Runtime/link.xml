@@ -1,0 +1,5 @@
+<linker>
+    <assembly fullname="com.ktgame.services.iap" ignoreIfMissing="1">
+        <namespace fullname="com.ktgame.services.iap" preserve="all"/>
+    </assembly>
+</linker>
