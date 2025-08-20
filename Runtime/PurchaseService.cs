@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using com.ktgame.core;
 using com.ktgame.iap.core;
+using com.ktgame.iap.unity;
 using com.ktgame.services.iap;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -64,29 +65,12 @@ namespace com.ktgame.services.iap
                 .ToDictionary(x => x.Key, x => x.First().CurrencySymbol);
 
             _settings = PurchaseServiceSettings.Instance;
-
-#if UNITY_PURCHASE && !UNITY_EDITOR
-#if UNITY_ANDROID
-            if (_settings.GoogleTangleObfuscate == null || _settings.GoogleTangleObfuscate.Length <= 0)
-            {
-                Debug.LogError($"[{GetType().Name}] GoogleTangleObfuscate Required!");
-                return UniTask.CompletedTask;
-            }
-#elif UNITY_IOS
-            if (_settings.AppleTangleObfuscate == null || _settings.AppleTangleObfuscate.Length <= 0)
-            {
-                Debug.LogError($"[{GetType().Name}] AppleTangleObfuscate Required!");
-                return UniTask.CompletedTask;
-            }
-#endif
-
-            IPurchaseValidator serverValidator = null;
-#if SERVER_PURCHASE
-            serverValidator = new ServerPurchaseValidator();    
-#endif
-            
+#if UNITY_PURCHASE
             var localValidator = new UnityPurchaseValidator(_settings.GoogleTangleObfuscate, _settings.AppleTangleObfuscate);
-            _purchase = new UnityPurchase(localValidator, serverValidator);
+            _purchase = new UnityPurchase(localValidator);
+#else
+            _purchase = new MockupPurchase();
+#endif
             
 #if SERVER_PURCHASE
             if (!string.IsNullOrEmpty(_settings.ServerAppId))
@@ -99,7 +83,6 @@ namespace com.ktgame.services.iap
                 Debug.LogError($"[{GetType().Name}] ServerAppId Required!");
                 return UniTask.CompletedTask;
             }
-#endif
 #else
             _purchase = new MockupPurchase();
 #endif
