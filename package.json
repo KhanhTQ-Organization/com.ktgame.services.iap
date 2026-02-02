@@ -9,7 +9,7 @@
     "url": "https://github.com/KhanhTQ-hub"
   },
   "dependencies": {
-    "com.ktgame.core": "1.0.9",
+    "com.ktgame.core": "1.1.0",
     "com.ktgame.iap.core": "1.0.1",
     "com.ktgame.unitask": "1.0.3"
   },

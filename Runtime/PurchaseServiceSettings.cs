@@ -29,21 +29,33 @@ namespace com.ktgame.services.iap
 
         [SerializeField] private List<ProductData> productData;
 
-        public string ServerAppId => serverAppId;
+        public string ServerAppId
+        {
+            get => serverAppId;
+            set => serverAppId = value;
+        }
 
-        public string AdjustEventName => adjustEventName;
+        public string AdjustEventName
+        {
+            get => adjustEventName;
+            set => adjustEventName = value;
+        }
 
         public byte[] GoogleTangleObfuscate => googleTangleObfuscate;
 
         public byte[] AppleTangleObfuscate => appleTangleObfuscate;
 
-        public List<ProductData> ProductData => productData ?? new List<ProductData>();
+        public List<ProductData> ProductData
+        {
+            get => productData ?? new List<ProductData>();
+            set => productData = value;
+        }
 
 #if UNITY_EDITOR
         private const string AppleCertPath = "Packages/com.ktgame.services.iap/Editor/AppleIncRootCertificate.cer";
 
         [Button("Obfuscate Generate")]
-        private void ObfuscateGenerate()
+        public void ObfuscateGenerate()
         {
             WriteObfuscatedAppleClassAsAsset();
             WriteObfuscatedGooglePlayClassAsAsset(androidBase64);
@@ -51,7 +63,7 @@ namespace com.ktgame.services.iap
         }
 
         [Button("Product Key Generate")]
-        private void ProductKeysGenerate()
+        public void ProductKeysGenerate()
         {
             if (productData.Count <= 0) return;
             var builder = new StringBuilder();

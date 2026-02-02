@@ -3,7 +3,9 @@
     "rootNamespace": "com.ktgame.services.iap.editor",
     "references": [
         "GUID:e0d50d8d303bdfb4cb75bac6d9c32055",
-        "GUID:ea2ae37156ab74bd0b7bf06641413d82"
+        "GUID:ea2ae37156ab74bd0b7bf06641413d82",
+        "GUID:07fa84c8891424e60a3080653dd9d1e0",
+        "GUID:552d76a3943fbe74f9c488fbb4f90d61"
     ],
     "includePlatforms": [
         "Editor"
