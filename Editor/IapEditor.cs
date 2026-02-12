@@ -23,6 +23,8 @@ namespace com.ktgame.services.iap.editor
 			_parametersIap = PurchaseServiceSettings.Instance;
 		}
 
+		[PropertySpace(20)]
+		[Title("Purchase Setting", Bold = true)]
 		[ShowInInspector]
 		[LabelText("Server App Id")]
 		public string ServerAppId
