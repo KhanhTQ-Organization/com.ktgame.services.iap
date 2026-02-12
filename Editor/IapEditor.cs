@@ -81,15 +81,15 @@ namespace com.ktgame.services.iap.editor
 			set => _parametersIap.ProductData = value;
 		}
 
-		// private ProductData CreateNewParameter()
-		// {
-		// 	// return new ConfigData
-		// 	// {
-		// 	// 	Name = "",
-		// 	// 	Type = ValueType.String,
-		// 	// 	DefaultValue = ""
-		// 	// };
-		// }
+		private ProductData CreateNewParameter()
+		{
+			return new ProductData
+			{
+				Id = "",
+				Type = PurchaseType.Consumable,
+				Price = "",
+			};
+		}
 
 		[Button("Obfuscate Generate")]
 		private void GenerateConfig()
