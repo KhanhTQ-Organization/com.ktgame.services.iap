@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.5...v1.0.6) (2026-03-04)
+
+
+### Bug Fixes
+
+* update adjust purchase ([f89e5b0](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/commit/f89e5b0f27db04fccce5df3929dbf1264c65953e))
+
 ## [1.0.5](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.4...v1.0.5) (2026-02-24)
 
 
