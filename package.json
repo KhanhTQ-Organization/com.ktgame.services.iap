@@ -1,6 +1,6 @@
 {
   "name": "com.ktgame.services.iap",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "displayName": "com.ktgame.services.iap",
   "description": "services iap",
   "author": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "com.ktgame.core": "1.0.10",
-    "com.ktgame.iap.core": "1.0.1",
+    "com.ktgame.iap.core": "1.0.2",
     "com.ktgame.unitask": "1.0.3"
   },
   "publishConfig": {

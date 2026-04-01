@@ -83,8 +83,6 @@ namespace com.ktgame.services.iap
                 Debug.LogError($"[{GetType().Name}] ServerAppId Required!");
                 return UniTask.CompletedTask;
             }
-#else
-            _purchase = new MockupPurchase();
 #endif
 
 #if ADJUST_ANALYTICS
@@ -95,7 +93,7 @@ namespace com.ktgame.services.iap
             else
             {
                 Debug.LogError($"[{GetType().Name}] AdjustEventName Required!");
-                return UniTask.CompletedTask;
+                //return UniTask.CompletedTask;
             }
 #endif
 
