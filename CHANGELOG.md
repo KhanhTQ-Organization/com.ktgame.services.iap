@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.8...v1.0.9) (2026-05-06)
+
+
+### Bug Fixes
+
+* update ([b6c4bf7](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/commit/b6c4bf7c84ed1f04bc18f70b3a8f37711bb8a8b4))
+
 ## [1.0.8](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.7...v1.0.8) (2026-05-06)
 
 
