@@ -65,12 +65,13 @@ namespace com.ktgame.services.iap
                 .ToDictionary(x => x.Key, x => x.First().CurrencySymbol);
 
             _settings = PurchaseServiceSettings.Instance;
+            _purchase = new MockupPurchase();
+            
 #if UNITY_PURCHASE
             var localValidator = new UnityPurchaseValidator(_settings.GoogleTangleObfuscate, _settings.AppleTangleObfuscate);
             _purchase = new UnityPurchase(localValidator);
-#else
-            _purchase = new MockupPurchase();
 #endif
+
             
 #if SERVER_PURCHASE
             if (!string.IsNullOrEmpty(_settings.ServerAppId))
