@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.10...v1.0.11) (2026-07-22)
+
+
+### Bug Fixes
+
+* name space ([87807c8](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/commit/87807c84d5f9d492d1a5e2ab09056e8acb20fddf))
+
 ## [1.0.10](https://github.com/KhanhTQ-Organization/com.ktgame.services.iap/compare/v1.0.9...v1.0.10) (2026-07-22)
 
 
