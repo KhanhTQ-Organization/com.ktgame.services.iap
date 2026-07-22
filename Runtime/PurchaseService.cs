@@ -11,6 +11,10 @@ using UnityEngine;
 using com.ktgame.iap.unity;
 #endif
 
+#if FIREBASE_ANALYTICS
+using com.ktgame.iap.extensions.firebase_revenue;
+#endif
+
 #if SERVER_PURCHASE
 using com.ktgame.iap.server;
 #endif
