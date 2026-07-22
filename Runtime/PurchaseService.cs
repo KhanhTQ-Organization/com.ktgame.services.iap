@@ -99,6 +99,10 @@ namespace com.ktgame.services.iap
 #if FACEBOOK_ANALYTICS
             _purchase = new FacebookPurchaseMeasureRevenue(_purchase);
 #endif
+            
+#if FIREBASE_ANALYTICS
+            _purchase = new FirebasePurchaseMeasureRevenue(_purchase);
+#endif
 
             _purchase.PurchaseInitialized += OnPurchaseInitialized;
             _purchase.PurchaseFailed += OnPurchaseFailed;
