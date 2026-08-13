@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -39,6 +39,12 @@ namespace com.ktgame.services.iap
         {
             get => adjustEventName;
             set => adjustEventName = value;
+        }
+
+        public string AndroidBase64
+        {
+            get => androidBase64;
+            set => androidBase64 = value;
         }
 
         public byte[] GoogleTangleObfuscate => googleTangleObfuscate;

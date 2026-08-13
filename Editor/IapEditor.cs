@@ -51,6 +51,17 @@ namespace com.ktgame.services.iap.editor
 
 		[BoxGroup("Security & Obfuscation", CenterLabel = true)]
 		[PropertySpace(SpaceBefore = 10)]
+		[LabelText("Android Base 64")]
+		[Tooltip("The Base64 encoded Google Play Public Key for your app.")]
+		[ShowInInspector]
+		[OnValueChanged("MarkDirty")]
+		public string AndroidBase64
+		{
+			get => _parametersIap.AndroidBase64;
+			set => _parametersIap.AndroidBase64 = value;
+		}
+
+		[BoxGroup("Security & Obfuscation")]
 		[LabelText("Google Tangle Key")]
 		[ShowInInspector, ReadOnly]
 		public byte[] GoogleTangleObfuscate => _parametersIap.GoogleTangleObfuscate;
