@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -46,25 +46,36 @@ namespace com.ktgame.services.iap
         private PurchaseServiceSettings _settings;
         private IDictionary<string, string> _currencySymbols;
 
+        private IDictionary<string, string> CurrencySymbols
+        {
+            get
+            {
+                if (_currencySymbols == null)
+                {
+                    _currencySymbols = CultureInfo
+                        .GetCultures(CultureTypes.AllCultures)
+                        .Where(c => !c.IsNeutralCulture)
+                        .Select(culture =>
+                        {
+                            try
+                            {
+                                return new RegionInfo(culture.Name);
+                            }
+                            catch
+                            {
+                                return null;
+                            }
+                        })
+                        .Where(ri => ri != null)
+                        .GroupBy(ri => ri.ISOCurrencySymbol)
+                        .ToDictionary(x => x.Key, x => x.First().CurrencySymbol);
+                }
+                return _currencySymbols;
+            }
+        }
+
         public UniTask OnInitialize(IArchitecture architecture)
         {
-            _currencySymbols = CultureInfo
-                .GetCultures(CultureTypes.AllCultures)
-                .Where(c => !c.IsNeutralCulture)
-                .Select(culture =>
-                {
-                    try
-                    {
-                        return new RegionInfo(culture.Name);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                })
-                .Where(ri => ri != null)
-                .GroupBy(ri => ri.ISOCurrencySymbol)
-                .ToDictionary(x => x.Key, x => x.First().CurrencySymbol);
 
             _settings = PurchaseServiceSettings.Instance;
             _purchase = new MockupPurchase();
@@ -83,8 +94,7 @@ namespace com.ktgame.services.iap
             }
             else
             {
-                Debug.LogError($"[{GetType().Name}] ServerAppId Required!");
-                return UniTask.CompletedTask;
+                Debug.LogError($"[{GetType().Name}] ServerAppId Required for Server Purchase Validation!");
             }
 #endif
 
@@ -191,9 +201,11 @@ namespace com.ktgame.services.iap
                 return product.LocalizedPrice;
             }
 
-            decimal result = 1;
-            decimal.TryParse(_settings.ProductData.First(p => string.Equals(p.Id, productId)).Price.Replace("$", ""), out result);
-            return result;
+            var fallbackProduct = _settings.ProductData.FirstOrDefault(p => string.Equals(p.Id, productId));
+            if (string.IsNullOrEmpty(fallbackProduct.Id)) return 0m;
+            
+            decimal.TryParse(fallbackProduct.Price.Replace("$", ""), out decimal result);
+            return result > 0 ? result : 1m;
         }
 
         public string GetCurrencyCode(string productId)
@@ -201,7 +213,7 @@ namespace com.ktgame.services.iap
             var product = GetProduct(productId);
             if (product != null && !string.IsNullOrEmpty(product.IsoCurrencyCode))
             {
-                return _currencySymbols.TryGetValue(product.IsoCurrencyCode, out var isoCurrencyCodeSymbol) ? isoCurrencyCodeSymbol : product.IsoCurrencyCode;
+                return CurrencySymbols.TryGetValue(product.IsoCurrencyCode, out var isoCurrencyCodeSymbol) ? isoCurrencyCodeSymbol : product.IsoCurrencyCode;
             }
 
             return "$";
@@ -215,7 +227,8 @@ namespace com.ktgame.services.iap
                 return product.LocalizedPriceString;
             }
 
-            return _settings.ProductData.First(p => string.Equals(p.Id, productId)).Price;
+            var fallbackProduct = _settings.ProductData.FirstOrDefault(p => string.Equals(p.Id, productId));
+            return !string.IsNullOrEmpty(fallbackProduct.Id) ? fallbackProduct.Price : "$0.00";
         }
 
         public void Purchase(string productId)

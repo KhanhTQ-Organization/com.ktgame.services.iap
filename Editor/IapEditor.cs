@@ -23,60 +23,65 @@ namespace com.ktgame.services.iap.editor
 			_parametersIap = PurchaseServiceSettings.Instance;
 		}
 
-		[PropertySpace(20)]
-		[Title("Purchase Setting", Bold = true)]
-		[ShowInInspector]
+		[Title("In-App Purchase SDK", "Manage your monetization and product configurations.", TitleAlignments.Centered)]
+		[PropertySpace(SpaceBefore = 10, SpaceAfter = 10)]
+		[InfoBox("Configure your IAP settings, security obfuscation, and define the products available for purchase in your game.", InfoMessageType.Info)]
+		
+		[BoxGroup("Analytics Integration", CenterLabel = true)]
 		[LabelText("Server App Id")]
+		[Tooltip("Your application's ID on the server.")]
+		[ShowInInspector]
+		[OnValueChanged("MarkDirty")]
 		public string ServerAppId
 		{
 			get => _parametersIap.ServerAppId;
-			set
-			{
-				_parametersIap.ServerAppId = value;
-				AssetDatabase.SaveAssets();
-			}
+			set => _parametersIap.ServerAppId = value;
 		}
 		
-		[ShowInInspector]
+		[BoxGroup("Analytics Integration")]
 		[LabelText("Adjust Event Name")]
+		[Tooltip("The event name mapped to successful purchases in Adjust.")]
+		[ShowInInspector]
+		[OnValueChanged("MarkDirty")]
 		public string AdjustEventName
 		{
 			get => _parametersIap.AdjustEventName;
-			set
-			{
-				_parametersIap.AdjustEventName = value;
-				AssetDatabase.SaveAssets();
-			}
+			set => _parametersIap.AdjustEventName = value;
 		}
-		
-		[ShowInInspector]
-		[LabelText("Google Tangle Obfuscate Key")]
+
+		[BoxGroup("Security & Obfuscation", CenterLabel = true)]
+		[PropertySpace(SpaceBefore = 10)]
+		[LabelText("Google Tangle Key")]
+		[ShowInInspector, ReadOnly]
 		public byte[] GoogleTangleObfuscate => _parametersIap.GoogleTangleObfuscate;
 		
-		[ShowInInspector]
-		[LabelText("Apple Tangle Obfuscate")]
+		[BoxGroup("Security & Obfuscation")]
+		[LabelText("Apple Tangle Key")]
+		[ShowInInspector, ReadOnly]
 		public byte[] AppleTangleObfuscate => _parametersIap.AppleTangleObfuscate;
+
+		[BoxGroup("Security & Obfuscation")]
+		[PropertySpace(SpaceAfter = 10)]
+		[Button("Generate Obfuscation Keys", ButtonSizes.Medium)]
+		private void GenerateConfig()
+		{
+			_parametersIap.ObfuscateGenerate();
+			MarkDirty();
+		}
 
 		[PropertyOrder(-1)]
 		[OnInspectorGUI]
 		private void OnInspectorGUI()
 		{
-			// if (!IsInstalledFirebase)
-			// 	RenderIfNotInstalled();
-			//
-			// if (GUI.changed)
-			// {
-			// 	EditorUtility.SetDirty(_parametersRc);
-			// 	AssetDatabase.SaveAssets();
-			// }
+			// RenderIfNotInstalled();
 		}
 
+		[PropertySpace(SpaceBefore = 10)]
 		[ListDrawerSettings(CustomAddFunction = "CreateNewParameter")]
-		//[HideReferenceObjectPicker]
-		//[InlineProperty]
 		[TableList(ShowIndexLabels = true, AlwaysExpanded = true)]
 		[ShowInInspector]
-		[LabelText("Purchase Config Parameters")]
+		[LabelText("Product Catalog")]
+		[OnValueChanged("MarkDirty")]
 		public List<ProductData> Parameters
 		{
 			get => _parametersIap.ProductData ?? new List<ProductData>();
@@ -93,16 +98,20 @@ namespace com.ktgame.services.iap.editor
 			};
 		}
 
-		[Button("Obfuscate Generate")]
-		private void GenerateConfig()
-		{
-			_parametersIap.ObfuscateGenerate();
-		}
-
-		[Button("Product Key Generate")]
+		[PropertySpace(SpaceBefore = 15)]
+		[Button("Generate Product Keys (Code)", ButtonSizes.Large, Icon = SdfIconType.CodeSlash), GUIColor(0.2f, 0.8f, 0.2f)]
 		private void ProductKeysGenerate()
 		{
 			_parametersIap.ProductKeysGenerate();
+			AssetDatabase.Refresh();
+		}
+
+		private void MarkDirty()
+		{
+			if (_parametersIap != null)
+			{
+				EditorUtility.SetDirty(_parametersIap);
+			}
 		}
 	}
 }
