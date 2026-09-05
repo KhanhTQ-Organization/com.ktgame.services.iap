@@ -72,9 +72,9 @@ namespace com.ktgame.iap.extensions.firebase_revenue
                 {
                     FirebaseAnalytics.LogEvent(
                         FirebaseAnalytics.EventPurchase,
-                        new Parameter(FirebaseAnalytics.ParameterItemID, product.Id),
-                        new Parameter(FirebaseAnalytics.ParameterCurrency, product.IsoCurrencyCode),
-                        new Parameter(FirebaseAnalytics.ParameterValue, (double)product.LocalizedPrice)
+                        new Parameter("item_id", product.Id),
+                        new Parameter("currency", product.IsoCurrencyCode),
+                        new Parameter("value", (double)product.LocalizedPrice)
                     );
 
                     Debug.Log(
