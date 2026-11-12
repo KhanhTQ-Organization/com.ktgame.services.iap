@@ -1,69 +1,32 @@
-#if FIREBASE_ANALYTICS
+﻿#if FIREBASE_ANALYTICS
 
 using UnityEngine;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using Firebase.Analytics;
 using com.ktgame.iap.core;
 
 namespace com.ktgame.iap.extensions.firebase_revenue
 {
-    public class FirebasePurchaseMeasureRevenue : IPurchase
+    public class FirebasePurchaseMeasureRevenue : PurchaseDecorator
     {
-        private readonly IPurchase _purchase;
-
-        public FirebasePurchaseMeasureRevenue(IPurchase purchase)
+        public FirebasePurchaseMeasureRevenue(IPurchase purchase) : base(purchase)
         {
-            _purchase = purchase;
-            _purchase.PurchaseCompleted += OnPurchaseCompleted;
         }
 
-        #region Forward Properties
-
-        public bool IsInitialized => _purchase.IsInitialized;
-
-        public IEnumerable<IProduct> Products => _purchase.Products;
-
-        public IPurchaseValidator LocalValidator => _purchase.LocalValidator;
-
-        public IPurchaseValidator ServerValidator => _purchase.ServerValidator;
-
-        #endregion
-
-        #region Forward Events
-
-        public event Action<PurchaseInitialize> PurchaseInitialized
+        protected override void PurchaseCompletedHandler(PurchaseComplete purchaseComplete)
         {
-            add => _purchase.PurchaseInitialized += value;
-            remove => _purchase.PurchaseInitialized -= value;
+            if (!purchaseComplete.IsRestored)
+            {
+                LogRevenue(purchaseComplete);
+            }
+
+            base.PurchaseCompletedHandler(purchaseComplete);
         }
 
-        public event Action<PurchaseError> PurchaseFailed
+        private void LogRevenue(PurchaseComplete purchaseComplete)
         {
-            add => _purchase.PurchaseFailed += value;
-            remove => _purchase.PurchaseFailed -= value;
-        }
-
-        public event Action<PurchaseProcess> PurchaseProcessing
-        {
-            add => _purchase.PurchaseProcessing += value;
-            remove => _purchase.PurchaseProcessing -= value;
-        }
-
-        public event Action<PurchaseComplete> ServerPurchaseValid
-        {
-            add => _purchase.ServerPurchaseValid += value;
-            remove => _purchase.ServerPurchaseValid -= value;
-        }
-
-        public event Action<PurchaseComplete> PurchaseCompleted;
-
-        #endregion
-
-        private void OnPurchaseCompleted(PurchaseComplete purchaseComplete)
-        {
-            var product = _purchase.Products?
+            var product = Purchaser.Products?
                 .FirstOrDefault(p => p.Id == purchaseComplete.ProductId);
 
             if (product != null && product.LocalizedPrice > 0)
@@ -74,7 +37,8 @@ namespace com.ktgame.iap.extensions.firebase_revenue
                         FirebaseAnalytics.EventPurchase,
                         new Parameter("item_id", product.Id),
                         new Parameter("currency", product.IsoCurrencyCode),
-                        new Parameter("value", (double)product.LocalizedPrice)
+                        new Parameter("value", (double)product.LocalizedPrice),
+                        new Parameter("transaction_id", purchaseComplete.TransactionId ?? string.Empty)
                     );
 
                     Debug.Log(
@@ -95,33 +59,7 @@ namespace com.ktgame.iap.extensions.firebase_revenue
                     $"[FirebaseRevenue] Product not found: {purchaseComplete.ProductId}"
                 );
             }
-
-            PurchaseCompleted?.Invoke(purchaseComplete);
         }
-
-        #region Forward Methods
-
-        public void InitializePurchasing(IEnumerable<ProductData> productData)
-        {
-            _purchase.InitializePurchasing(productData);
-        }
-
-        public void Purchase(string productId)
-        {
-            _purchase.Purchase(productId);
-        }
-
-        public void RestorePurchases()
-        {
-            _purchase.RestorePurchases();
-        }
-
-        public SubscriptionInfo GetSubscriptionInfo(string productId)
-        {
-            return _purchase.GetSubscriptionInfo(productId);
-        }
-
-        #endregion
     }
 }
 #endif

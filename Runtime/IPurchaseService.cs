@@ -13,6 +13,12 @@ namespace com.ktgame.services.iap
 		event Action<PurchaseProcess> PurchaseProcessing;
 
 		event Action<PurchaseComplete> ServerPurchaseValid;
+		
+		event Action<PurchaseRestore> RestoreCompleted
+		{
+			add { }
+			remove { }
+		}
         
 		void SetUserId(string userId);
 

@@ -24,10 +24,10 @@ namespace com.ktgame.services.iap
             {
                 var j = rnd.Next(i, slices - 1);
                 order[i] = j;
-                var sliceSize = 20; // prob should be configurable
-                var tmp = res.Skip(i * 20).Take(sliceSize).ToArray(); // tmp = res[i*20 .. slice]
-                Array.Copy(res, j * 20, res, i * 20, sliceSize); // res[i] = res[j*20 .. slice]
-                Array.Copy(tmp, 0, res, j * 20, sliceSize); // res[j] = tmp
+                var sliceSize = 20; 
+                var tmp = res.Skip(i * 20).Take(sliceSize).ToArray(); 
+                Array.Copy(res, j * 20, res, i * 20, sliceSize);
+                Array.Copy(tmp, 0, res, j * 20, sliceSize);
             }
 
             order[slices - 1] = slices - 1;
@@ -47,9 +47,9 @@ namespace com.ktgame.services.iap
             {
                 var j = order[i];
                 int sliceSize = (hasRemainder && j == slices - 1) ? (data.Length % 20) : 20;
-                var tmp = res.Skip(i * 20).Take(sliceSize).ToArray(); // tmp = res[i*20 .. slice]
-                Array.Copy(res, j * 20, res, i * 20, sliceSize); // res[i] = res[j*20 .. slice]
-                Array.Copy(tmp, 0, res, j * 20, sliceSize); // res[j] = tmp
+                var tmp = res.Skip(i * 20).Take(sliceSize).ToArray();
+                Array.Copy(res, j * 20, res, i * 20, sliceSize);
+                Array.Copy(tmp, 0, res, j * 20, sliceSize);
             }
 
             return res.Select(x => (byte)(x ^ key)).ToArray();

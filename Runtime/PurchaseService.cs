@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -38,6 +38,7 @@ namespace com.ktgame.services.iap
         public event Action<PurchaseComplete> PurchaseCompleted;
         public event Action<PurchaseProcess> PurchaseProcessing;
         public event Action<PurchaseComplete> ServerPurchaseValid;
+        public event Action<PurchaseRestore> RestoreCompleted;
 
         private IPurchase _purchase;
 #if SERVER_PURCHASE
@@ -123,6 +124,7 @@ namespace com.ktgame.services.iap
             _purchase.PurchaseProcessing += OnPurchaseProcessing;
             _purchase.PurchaseCompleted += OnPurchaseCompleted;
             _purchase.ServerPurchaseValid += OnServerPurchaseValid;
+            _purchase.RestoreCompleted += OnRestoreCompleted;
             _purchase.InitializePurchasing(_settings.ProductData);
             return UniTask.CompletedTask;
         }
@@ -154,6 +156,12 @@ namespace com.ktgame.services.iap
             ServerPurchaseValid?.Invoke(purchaseComplete);
         }
 
+        private void OnRestoreCompleted(PurchaseRestore purchaseRestore)
+        {
+            Debug.Log($"[{GetType().Name}] Restore {(purchaseRestore.IsSuccess ? "SUCCESS" : "FAILED")}. {purchaseRestore.Message}");
+            RestoreCompleted?.Invoke(purchaseRestore);
+        }
+
         public void SetUserId(string userId)
         {
 #if SERVER_PURCHASE
@@ -170,7 +178,7 @@ namespace com.ktgame.services.iap
 
         public IProduct GetProduct(string productId)
         {
-            if (_purchase.IsInitialized)
+            if (_purchase != null && _purchase.IsInitialized)
             {
                 return _purchase.Products.FirstOrDefault(p => p.Id == productId);
             }
@@ -185,7 +193,7 @@ namespace com.ktgame.services.iap
 
         public SubscriptionInfo GetSubscriptionInfo(string productId)
         {
-            if (_purchase.IsInitialized)
+            if (_purchase != null && _purchase.IsInitialized)
             {
                 return _purchase.GetSubscriptionInfo(productId);
             }
@@ -204,7 +212,7 @@ namespace com.ktgame.services.iap
             var fallbackProduct = _settings.ProductData.FirstOrDefault(p => string.Equals(p.Id, productId));
             if (string.IsNullOrEmpty(fallbackProduct.Id)) return 0m;
             
-            decimal.TryParse(fallbackProduct.Price.Replace("$", ""), out decimal result);
+            decimal.TryParse(fallbackProduct.Price?.Replace("$", ""), NumberStyles.Number, CultureInfo.InvariantCulture, out decimal result);
             return result > 0 ? result : 1m;
         }
 
@@ -233,25 +241,27 @@ namespace com.ktgame.services.iap
 
         public void Purchase(string productId)
         {
-            if (_purchase.IsInitialized)
+            if (_purchase != null && _purchase.IsInitialized)
             {
                 _purchase.Purchase(productId);
             }
             else
             {
-                Debug.LogError($"[{GetType().Name}] Not Initialized!");
+                Debug.LogError($"[{GetType().Name}] Purchase {productId}: Not Initialized!");
+                PurchaseFailed?.Invoke(new PurchaseError(productId, PurchaseStatus.PurchasingUnavailable, "Purchase service not initialized"));
             }
         }
 
         public void Restore()
         {
-            if (_purchase.IsInitialized)
+            if (_purchase != null && _purchase.IsInitialized)
             {
                 _purchase.RestorePurchases();
             }
             else
             {
-                Debug.LogError($"[{GetType().Name}] NOt Initialized!");
+                Debug.LogError($"[{GetType().Name}] Restore: Not Initialized!");
+                RestoreCompleted?.Invoke(new PurchaseRestore(false, "Purchase service not initialized"));
             }
         }
     }
